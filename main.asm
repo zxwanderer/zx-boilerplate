@@ -2,30 +2,34 @@
 
     DEVICE 	ZXSPECTRUM128
 
+SCREEN_PTR equ #4000
+SCREEN_SIZE equ 6144 ; in bytes
+SCREEN_WIDTH equ 256
+SCREEN_HEIGHT equ 192
+
+ATTR_PTR equ #5800
+ATTR_SIZE equ 768
+ATTR_WIDTH equ 32
+ATTR_HEIGHT equ 24
+
 	ORG	#8000
 START:
-		DI
-        XOR A
+        LD HL, music: CALL MusicPlayer.INIT
+        EI
+
 LOOP0
-		LD	HL,#4000+192
-		LD	B,192 
-        ; +24
-LOOP1
-		LD	C,32	;в регистр C кладем ширину экрана в байтах
-LOOP2
-		LD	(HL),A	;кладем по адресу, заданному регистром HL значение регистра A
-        OUT (#FE), A
+        HALT
+        CALL MusicPlayer.PLAY
+        LD A, R
+        OUT ($FE), A
+		JP	LOOP0
 
-		INC	HL	;увеличиваем на единицу адрес экрана
-		DEC	A	;уменьшаем на единицу значение в регистре A, просто чтобы всё время что-то новое выводить
-		DEC	C	;уменьшаем счетчик ширины на единицу
-		JP	NZ,LOOP2;пока C не достигло нуля, прыгаем на LOOP2, иначе идем дальше
-		
-        DEC	B
-		JP	NZ,LOOP1;пока B не достигло нуля, прыгаем на LOOP1, иначе идем дальше
+    MODULE MusicPlayer
+    include "routines/PTxPlay.a80"
+    ENDMOD
 
-		DEC	A	;на единичку уменьшим A, чтобы следующий кадр отрисовывать с чего-то другого
-		JP	LOOP0	;зарисовали весь экран ерундой, начнем сначала, но уже с тем A, какой попадется
+music:
+    incbin "music.pt3"
 
 		SAVESNA "out/main.sna",START
 
