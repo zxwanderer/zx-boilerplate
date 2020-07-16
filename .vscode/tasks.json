@@ -6,13 +6,17 @@
         {
             "type": "shell",
             "label": "make_sna",
-            "command": "./bin/sjasmplus --dos866 --nofakes --dirbol main.asm",
+            "osx":{
+                "command": "${workspaceFolder}/bin/osx/sjasmplus --dos866 --nofakes --dirbol main.asm",
+            },
             "problemMatcher": "$errmatcher-sjasmplus",
         },
         {
             "type": "shell",
             "label": "run_sna",
-            "command": "open -a 'Unreal Speccy Portable' out/main.sna",
+            "osx":{
+                "command": "open -a 'Unreal Speccy Portable' ${workspaceFolder}/out/main.sna",
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
